@@ -4,7 +4,7 @@
   "parameters": {
     "virtualNetworkName": {
       "type": "string",
-      "defaultValue": "CoreVNet",
+      "defaultValue": "First_ARM_VNet",
       "metadata": {
         "description": "This is your Virtual Network"
       }
@@ -37,13 +37,6 @@
         "description": "This is CIDR prefix for the Database Subnet"
       }
     },
-    "DomSubnetPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.3.0/24",
-      "metadata": {
-        "description": "This is CIDR prefix for the Domain severs Subnet"
-      }
-    },
     "FENSGName": {
       "type": "string",
       "defaultValue": "FE_NSG",
@@ -65,11 +58,11 @@
         "description": "This is name of the networkSecurityGroup that will be assigned to Database Subnet"
       }
     },
-    "DomNSGName": {
+    "location": {
       "type": "string",
-      "defaultValue": "Dom_NSG",
+      "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "This is name of the networkSecurityGroup that will be assigned to Database Subnet"
+        "description": "Location for all resources."
       }
     }
   },
@@ -78,7 +71,7 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[parameters('FENSGName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "properties": {
         "securityRules": [
           {
@@ -116,7 +109,7 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[parameters('AppNSGName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "properties": {
         "securityRules": [
           {
@@ -168,7 +161,7 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[parameters('DBNSGName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "properties": {
         "securityRules": [
           {
@@ -234,7 +227,7 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[parameters('virtualNetworkName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('FENSGName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('AppNSGName'))]",
