@@ -5,8 +5,32 @@
     "virtualNetworkName": {
       "value": "CoreVnet"
     },
-    "FENSGName": {
+    "addressPrefix": {
       "value": "FE_NSG"
+    },
+    "feNSGName": {
+      "value": "FE_NSG"
+    },
+    "feSubnetPrefix": {
+      "value": "10.0.1.0/24"
+    },
+    "AppNSGName": {
+      "value": "App_NSG"
+    },
+    "appSubnetPrefix": {
+      "value": "10.0.2.0/24"
+    },
+    "dbNSGName": {
+      "value": "DB_NSG"
+    },
+    "dbSubnetPrefix": {
+      "value": "10.0.3.0/24"
+    },
+    "dcNSGName": {
+      "value": "DC_NSG"
+    },
+    "dcSubnetPrefix": {
+      "value": "10.0.160.0/24"
     }
   } 
 }
