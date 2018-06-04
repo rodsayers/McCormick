@@ -2,46 +2,11 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "virtualNetworkName": {
-      "type": "string",
-      "defaultValue": "First_ARM_VNet",
-      "metadata": {
-        "description": "This is your Virtual Network"
-      }
-    },
     "addressPrefix": {
       "type": "string",
       "defaultValue": "10.0.0.0/16",
       "metadata": {
         "description": "The CIDR address space for your Virtual Network in Azure"
-      }
-    },
-    "FESubnetPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/24",
-      "metadata": {
-        "description": "This is CIDR prefix for the FrontEnd Subnet"
-      }
-    },
-    "AppSubnetPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.1.0/24",
-      "metadata": {
-        "description": "This is CIDR prefix for the Application Subnet"
-      }
-    },
-    "DBSubnetPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.2.0/24",
-      "metadata": {
-        "description": "This is CIDR prefix for the Database Subnet"
-      }
-    },
-    "FENSGName": {
-      "type": "string",
-      "defaultValue": "FE_NSG",
-      "metadata": {
-        "description": "This is name of the networkSecurityGroup that will be assigned to FrontEnd Subnet"
       }
     },
     "AppNSGName": {
@@ -51,11 +16,53 @@
         "description": "This is name of the networkSecurityGroup that will be assigned to Application Subnet"
       }
     },
+    "AppSubnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.2.0/24",
+      "metadata": {
+        "description": "This is CIDR prefix for the Application Subnet"
+      }
+    },
     "DBNSGName": {
       "type": "string",
       "defaultValue": "DB_NSG",
       "metadata": {
         "description": "This is name of the networkSecurityGroup that will be assigned to Database Subnet"
+      }
+    },
+    "DBSubnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.3.0/24",
+      "metadata": {
+        "description": "This is CIDR prefix for the Database Subnet"
+      }
+    },
+    "DCNSGName": {
+      "type": "string",
+      "defaultValue": "DC_NSG",
+      "metadata": {
+        "description": "This is name of the networkSecurityGroup that will be assigned to Domain Controller Subnet"
+      }
+    },
+    "DCSubnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.160.0/24",
+      "metadata": {
+        "description": "This is CIDR prefix for the Domain Controller Subnet"
+      }
+    },
+    "FENSGName": {
+      "type": "string",
+      "defaultValue": "FE_NSG",
+      "metadata": {
+        "description": "This is name of the networkSecurityGroup that will be assigned to FrontEnd Subnet"
+      }
+    },
+    "FESubnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.1.0/24",
+      "metadata": {
+        "description": "This is CIDR prefix for the FrontEnd Subnet"
       }
     },
     "location": {
@@ -64,11 +71,56 @@
       "metadata": {
         "description": "Location for all resources."
       }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "defaultValue": "First_ARM_VNet",
+      "metadata": {
+        "description": "This is your Virtual Network"
+      }
     }
   },
   "resources": [
     {
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "2018-02-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[parameters('DCNSGName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "rdp_rule",
+            "properties": {
+              "description": "Allow RDP",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "web_rule",
+            "properties": {
+              "description": "Allow WEB",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-02-01",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[parameters('FENSGName')]",
       "location": "[parameters('location')]",
@@ -106,7 +158,7 @@
       }
     },
     {
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "2018-02-01",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[parameters('AppNSGName')]",
       "location": "[parameters('location')]",
@@ -130,7 +182,7 @@
             "name": "Block_RDP_Internet",
             "properties": {
               "description": "Block RDP",
-              "protocol": "tcp",
+              "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "3389",
               "sourceAddressPrefix": "Internet",
@@ -158,7 +210,7 @@
       }
     },
     {
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "2018-02-01",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[parameters('DBNSGName')]",
       "location": "[parameters('location')]",
@@ -224,13 +276,14 @@
       }
     },
     {
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "2018-02-01",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[parameters('virtualNetworkName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('FENSGName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('AppNSGName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('DCNSGName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('DBNSGName'))]"
       ],
       "properties": {
@@ -264,6 +317,15 @@
               "addressPrefix": "[parameters('DBSubnetPrefix')]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('DBNSGName'))]"
+              }
+            }
+          },
+          {
+            "name": "DCSubnet",
+            "properties": {
+              "addressPrefix": "[parameters('DCSubnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('DCNSGName'))]"
               }
             }
           }

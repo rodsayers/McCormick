@@ -4,6 +4,9 @@
   "parameters": {
     "virtualNetworkName": {
       "value": "CoreVnet"
+    },
+    "FENSGName": {
+      "value": "FE_NSG"
     }
-  }
+  } 
 }

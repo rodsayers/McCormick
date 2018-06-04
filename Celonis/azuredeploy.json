@@ -2,280 +2,148 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "virtualNetworkName": {
+    "adminUsername": {
       "type": "string",
-      "defaultValue": "CoreVNet",
       "metadata": {
-        "description": "This is your Virtual Network"
+        "description": "Username for the Virtual Machine."
       }
     },
-    "addressPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/16",
+    "adminPassword": {
+      "type": "securestring",
       "metadata": {
-        "description": "The CIDR address space for your Virtual Network in Azure"
+        "description": "Password for the Virtual Machine."
       }
     },
-    "FESubnetPrefix": {
+    "windowsOSVersion": {
       "type": "string",
-      "defaultValue": "10.0.0.0/24",
+      "defaultValue": "2012-R2-Datacenter",
+      "allowedValues": [
+        "2008-R2-SP1",
+        "2012-Datacenter",
+        "2012-R2-Datacenter",
+        "2016-Nano-Server",
+        "2016-Datacenter-with-Containers",
+        "2016-Datacenter"
+      ],
       "metadata": {
-        "description": "This is CIDR prefix for the FrontEnd Subnet"
+        "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version."
       }
     },
-    "AppSubnetPrefix": {
+    "VNETname": {
       "type": "string",
-      "defaultValue": "10.0.1.0/24",
       "metadata": {
-        "description": "This is CIDR prefix for the Application Subnet"
+        "description": "Name of VNET to add VM to."
       }
     },
-    "DBSubnetPrefix": {
+    "SubnetName": {
       "type": "string",
-      "defaultValue": "10.0.2.0/24",
       "metadata": {
-        "description": "This is CIDR prefix for the Database Subnet"
+        "description": "Name of subnet to add VM to."
       }
     },
-    "DomSubnetPrefix": {
+    "vmSize": {
       "type": "string",
-      "defaultValue": "10.0.3.0/24",
       "metadata": {
-        "description": "This is CIDR prefix for the Domain severs Subnet"
-      }
-    },
-    "FENSGName": {
-      "type": "string",
-      "defaultValue": "FE_NSG",
-      "metadata": {
-        "description": "This is name of the networkSecurityGroup that will be assigned to FrontEnd Subnet"
-      }
-    },
-    "AppNSGName": {
-      "type": "string",
-      "defaultValue": "App_NSG",
-      "metadata": {
-        "description": "This is name of the networkSecurityGroup that will be assigned to Application Subnet"
-      }
-    },
-    "DBNSGName": {
-      "type": "string",
-      "defaultValue": "DB_NSG",
-      "metadata": {
-        "description": "This is name of the networkSecurityGroup that will be assigned to Database Subnet"
-      }
-    },
-    "DomNSGName": {
-      "type": "string",
-      "defaultValue": "Dom_NSG",
-      "metadata": {
-        "description": "This is name of the networkSecurityGroup that will be assigned to Database Subnet"
+        "description": "The VM size to be created."
       }
     }
   },
+  "variables": {
+    "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sawinvm')]",
+    "nicName": "[concat('WinNIC-', uniquestring(resourceGroup().id))]",
+    "vmName": "[substring(concat('WinVM-', uniquestring(resourceGroup().id)),0,15)]",
+    "virtualNetworkName": "[parameters('VNETname')]",
+    "subnetName": "[parameters('SubnetName')]",
+    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
+  },
   "resources": [
     {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[parameters('FENSGName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "Storage",
+      "properties": {}
+    },
+    {
+      "apiVersion": "2016-03-30",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('nicName')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "securityRules": [
+        "ipConfigurations": [
           {
-            "name": "rdp_rule",
+            "name": "ipconfig1",
             "properties": {
-              "description": "Allow RDP",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "3389",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "web_rule",
-            "properties": {
-              "description": "Allow WEB",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "80",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 101,
-              "direction": "Inbound"
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
             }
           }
         ]
       }
     },
     {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[parameters('AppNSGName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "Allow_FE",
-            "properties": {
-              "description": "Allow FE Subnet",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "443",
-              "sourceAddressPrefix": "[parameters('FESubnetPrefix')]",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Block_RDP_Internet",
-            "properties": {
-              "description": "Block RDP",
-              "protocol": "tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "3389",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
-              "access": "Deny",
-              "priority": 101,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Block_Internet_Outbound",
-            "properties": {
-              "description": "Block Internet",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "Internet",
-              "access": "Deny",
-              "priority": 200,
-              "direction": "Outbound"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[parameters('DBNSGName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "Allow_App",
-            "properties": {
-              "description": "Allow APP Subnet",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "1433",
-              "sourceAddressPrefix": "[parameters('AppSubnetPrefix')]",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Block_FE",
-            "properties": {
-              "description": "Block FE Subnet",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "[parameters('FESubnetPrefix')]",
-              "destinationAddressPrefix": "*",
-              "access": "Deny",
-              "priority": 101,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Block_App",
-            "properties": {
-              "description": "Block App Subnet",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "[parameters('AppSubnetPrefix')]",
-              "destinationAddressPrefix": "*",
-              "access": "Deny",
-              "priority": 102,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Block_Internet",
-            "properties": {
-              "description": "Block Internet",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "Internet",
-              "access": "Deny",
-              "priority": 200,
-              "direction": "Outbound"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/virtualNetworks",
-      "name": "[parameters('virtualNetworkName')]",
+      "apiVersion": "2016-04-30-preview",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('vmName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('FENSGName'))]",
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('AppNSGName'))]",
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('DBNSGName'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
       "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[parameters('addressPrefix')]"
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "[parameters('windowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "diskSizeGB": "1023",
+              "lun": 0,
+              "createOption": "Empty"
+            }
           ]
         },
-        "subnets": [
-          {
-            "name": "FESubnet",
-            "properties": {
-              "addressPrefix": "[parameters('FESubnetPrefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('FENSGName'))]"
-              }
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
             }
-          },
-          {
-            "name": "AppSubnet",
-            "properties": {
-              "addressPrefix": "[parameters('AppSubnetPrefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('AppNSGName'))]"
-              }
-            }
-          },
-          {
-            "name": "DBSubnet",
-            "properties": {
-              "addressPrefix": "[parameters('DBSubnetPrefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('DBNSGName'))]"
-              }
-            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": "true",
+            "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob]"
           }
-        ]
+        }
       }
     }
-  ]
+  ],
+  "outputs": {
+    "adminUsername": {
+      "type": "string",
+      "value": "[parameters('adminUsername')]"
+    }
+
+  }
 }
