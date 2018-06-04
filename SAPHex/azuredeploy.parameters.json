@@ -1,0 +1,69 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "eastus2"
+    },
+    "virtualMachineName": {
+      "value": "hxe"
+    },
+    "virtualMachineSize": {
+      "value": "Standard_DS11_v2_Promo"
+    },
+    "adminUsername": {
+      "value": "capadmin"
+    },
+    "virtualNetworkName": {
+      "value": "CoreVnet"
+    },
+    "networkInterfaceName": {
+      "value": "hxe469"
+    },
+    "networkSecurityGroupName": {
+      "value": "DB_NSG"
+    },
+    "adminPassword": {
+      "value": "Welcome12345"
+    },
+    "diagnosticsStorageAccountName": {
+      "value": "mccormickdiag320"
+    },
+    "diagnosticsStorageAccountId": {
+      "value": "Microsoft.Storage/storageAccounts/mccormickdiag320"
+    },
+    "diagnosticsStorageAccountType": {
+      "value": "Standard_LRS"
+    },
+    //"addressPrefix": {
+    //  "value": "10.0.0.0/16"
+    //},
+    "subnetName": {
+      "value": "DBSubnet"
+    },
+    //"subnetPrefix": {
+    //  "value": "10.0.2.0/24"
+    //},
+    "publicIpAddressName": {
+      "value": "hxe-pip"
+    },
+    "publicIpAddressType": {
+      "value": "Dynamic"
+    },
+    "publicIpAddressSku": {
+      "value": "Basic"
+    },
+    "autoShutdownStatus": {
+      "value": "Enabled"
+    },
+    "autoShutdownTime": {
+      "value": "18:00"
+    },
+    "autoShutdownTimeZone": {
+      "value": "Eastern Standard Time"
+    },
+    "autoShutdownNotificationStatus": {
+      "value": "Disabled"
+    }
+  }
+}

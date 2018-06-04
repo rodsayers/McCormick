@@ -6,30 +6,30 @@
       "value": "CoreVnet"
     },
     "addressPrefix": {
+      "value": "10.0.0.0/16"
+    },
+    "FENSGName": {
       "value": "FE_NSG"
     },
-    "feNSGName": {
-      "value": "FE_NSG"
-    },
-    "feSubnetPrefix": {
-      "value": "10.0.1.0/24"
+    "FESubnetPrefix": {
+      "value": "10.0.161.0/24"
     },
     "AppNSGName": {
       "value": "App_NSG"
     },
-    "appSubnetPrefix": {
-      "value": "10.0.2.0/24"
+    "AppSubnetPrefix": {
+      "value": "10.0.162.0/24"
     },
-    "dbNSGName": {
+    "DBNSGName": {
       "value": "DB_NSG"
     },
-    "dbSubnetPrefix": {
-      "value": "10.0.3.0/24"
+    "DBSubnetPrefix": {
+      "value": "10.0.163.0/24"
     },
-    "dcNSGName": {
+    "DCNSGName": {
       "value": "DC_NSG"
     },
-    "dcSubnetPrefix": {
+    "DCSubnetPrefix": {
       "value": "10.0.160.0/24"
     }
   } 

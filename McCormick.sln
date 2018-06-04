@@ -7,6 +7,8 @@ Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Celonis", "Celonis\Celonis.
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "CoreNetwork", "CoreNetwork\CoreNetwork.deployproj", "{FC285C71-ACC5-40FF-AF24-6BA6C8970D89}"
 EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "SAPHex", "SAPHex\SAPHex.deployproj", "{1A8F2C7C-5354-4D1A-82A7-7BD6B30B3F7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{FC285C71-ACC5-40FF-AF24-6BA6C8970D89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC285C71-ACC5-40FF-AF24-6BA6C8970D89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC285C71-ACC5-40FF-AF24-6BA6C8970D89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A8F2C7C-5354-4D1A-82A7-7BD6B30B3F7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A8F2C7C-5354-4D1A-82A7-7BD6B30B3F7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A8F2C7C-5354-4D1A-82A7-7BD6B30B3F7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A8F2C7C-5354-4D1A-82A7-7BD6B30B3F7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
