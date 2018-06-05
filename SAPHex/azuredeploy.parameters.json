@@ -18,7 +18,7 @@
       "value": "CoreVnet"
     },
     "networkInterfaceName": {
-      "value": "hxe469"
+      "value": "hxe_nic"
     },
     "networkSecurityGroupName": {
       "value": "DB_NSG"
@@ -27,7 +27,7 @@
       "value": "Welcome12345"
     },
     "diagnosticsStorageAccountName": {
-      "value": "mccormickdiag320"
+      "value": "mccormickdiag32055"
     },
     "diagnosticsStorageAccountId": {
       "value": "Microsoft.Storage/storageAccounts/mccormickdiag320"

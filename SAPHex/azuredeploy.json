@@ -35,15 +35,15 @@
     "diagnosticsStorageAccountType": {
       "type": "string"
     },
-    "addressPrefix": {
-      "type": "string"
-    },
+    //"addressPrefix": {
+    //  "type": "string"
+    //},
     "subnetName": {
       "type": "string"
     },
-    "subnetPrefix": {
-      "type": "string"
-    },
+    //"subnetPrefix": {
+    //  "type": "string"
+    //},
     "publicIpAddressName": {
       "type": "string"
     },
@@ -67,8 +67,12 @@
     }
   },
   "variables": {
-    "vnetId": "[resourceId(resourceGroup().id,'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-    "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
+   //"vnetId": "[resourceId(resourceGroup().id,'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    //"subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+    "virtualNetworkName": "[parameters('virtualNetworkName')]",
+    "subnetName": "[parameters('SubnetName')]",
+    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
+
   },
     "resources": [
         {
@@ -115,7 +119,7 @@
                 "diagnosticsProfile": {
                   "bootDiagnostics": {
                     "enabled": true,
-                    "storageUri": "[reference(resourceId(resourceGroup().id, 'Microsoft.Storage/storageAccounts', parameters('diagnosticsStorageAccountName')), '2015-06-15').primaryEndpoints['blob']]"
+                    "storageUri": "[reference(resourceId( 'Microsoft.Storage/storageAccounts', parameters('diagnosticsStorageAccountName')), '2015-06-15').primaryEndpoints['blob']]"
                   }
                 }
             },
@@ -124,28 +128,28 @@
                 "[concat('Microsoft.Storage/storageAccounts/', parameters('diagnosticsStorageAccountName'))]"
             ]
         },
-        {
-            "type": "Microsoft.DevTestLab/schedules",
-            "name": "[concat('shutdown-computevm-', parameters('virtualMachineName'))]",
-            "apiVersion": "2017-04-26",
-            "location": "[parameters('location')]",
-            "properties": {
-                "status": "[parameters('autoShutdownStatus')]",
-                "taskType": "ComputeVmShutdownTask",
-                "dailyRecurrence": {
-                    "time": "[parameters('autoShutdownTime')]"
-                },
-                "timeZoneId": "[parameters('autoShutdownTimeZone')]",
-                "targetResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
-                "notificationSettings": {
-                    "status": "[parameters('autoShutdownNotificationStatus')]",
-                    "timeInMinutes": "30"
-                }
-            },
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
-            ]
+      {
+        "type": "Microsoft.DevTestLab/schedules",
+        "name": "[concat('shutdown-computevm-', parameters('virtualMachineName'))]",
+        "apiVersion": "2017-04-26-preview",
+        "location": "[parameters('location')]",
+        "properties": {
+          "status": "[parameters('autoShutdownStatus')]",
+          "taskType": "ComputeVmShutdownTask",
+          "dailyRecurrence": {
+            "time": "[parameters('autoShutdownTime')]"
+          },
+          "timeZoneId": "[parameters('autoShutdownTimeZone')]",
+          "targetResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
+          "notificationSettings": {
+            "status": "[parameters('autoShutdownNotificationStatus')]",
+            "timeInMinutes": "30"
+          }
         },
+        "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+        ]
+      },
         {
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('diagnosticsStorageAccountName')]",
@@ -191,20 +195,22 @@
                             },
                             "privateIPAllocationMethod": "Dynamic",
                           "publicIpAddress": {
-                            "id": "[resourceId(resourceGroup().id,'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
+                            "id": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
                           }
                         }
                     }
                 ],
               "networkSecurityGroup": {
-                "id": "[resourceId(resourceGroup().id, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
               }
             },
-            "dependsOn": [
-                "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
-                "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]",
-                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
-            ]
+          "dependsOn": [
+            //"[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
+
+            //"[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('Subnetname'))]",
+            "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]" //,
+            //"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
+          ]
         },
         {
             "type": "Microsoft.Network/publicIPAddresses",
