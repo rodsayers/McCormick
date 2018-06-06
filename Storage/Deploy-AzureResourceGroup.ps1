@@ -1,9 +1,8 @@
 #Requires -Version 3.0
-#Run Connect-AzureRmAccount
+
 Param(
-    #[string] [Parameter(Mandatory=$true)] $ResourceGroupLocation,
-    [string] $ResourceGroupLocation = 'eastus2',
-    [string] $ResourceGroupName = 'Celonis',
+    [string] [Parameter(Mandatory=$true)] $ResourceGroupLocation,
+    [string] $ResourceGroupName = 'McCormick',
     [switch] $UploadArtifacts,
     [string] $StorageAccountName,
     [string] $StorageContainerName = $ResourceGroupName.ToLowerInvariant() + '-stageartifacts',
