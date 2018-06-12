@@ -9,7 +9,8 @@
       "type": "string"
     },
     "accountType": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "Standard_LRS"
     },
     "kind": {
       "type": "string"

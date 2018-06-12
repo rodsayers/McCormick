@@ -1,0 +1,271 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "existingdiagnosticsStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the diagnostics storage account"
+      }
+    },
+    "existingdiagnosticsStorageResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource Group of the diagnostics storage account"
+      }
+    },
+    "publicIPAddressType": {
+      "type": "string",
+      "defaultValue": "Dynamic",
+      "allowedValues": [
+        "Dynamic"
+      ],
+      "metadata": {
+        "description": "Type of Public Address"
+      }
+    },
+    "vmName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the VM"
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_A1_v2",
+      "allowedValues": [
+        "Standard_A1_v2",
+        "Standard_A2m_v2",
+        "Standard_A2_v2",
+        "Standard_A4m_v2",
+        "Standard_A4_v2",
+        "Standard_A8m_v2",
+        "Standard_A8_v2",
+        "Standard_D1_v2",
+        "Standard_D2_v2",
+        "Standard_D3_v2",
+        "Standard_D4_v2"
+
+      ],
+      "metadata": {
+        "description": "Size of the VM"
+      }
+    },
+    "numDataDisks": {
+      "type": "int",
+      "defaultValue": 4,
+      "minValue": 1,
+      "maxValue": 64,
+      "metadata": {
+        "description": "This parameter allows the user to select the number of disks they want"
+      }
+    },
+    "sizeOfDataDisksInGB": {
+      "type": "int",
+      "defaultValue": 100,
+      "metadata": {
+        "description": "The size of each disk in GB"
+      }
+    },
+    "diskcaching": {
+      "type": "string",
+      "defaultValue": "None",
+      "metadata": {
+        "description": "Data disk Caching mode"
+      }
+    },
+    "imagePublisher": {
+      "type": "string",
+      "defaultValue": "SUSE",
+      "metadata": {
+        "description": "Image Publisher"
+      }
+    },
+    "imageOffer": {
+      "type": "string",
+      "defaultValue": "SLES",
+      "metadata": {
+        "description": "Image Offer"
+      }
+    },
+    "imageSKU": {
+      "type": "string",
+      "defaultValue": "12-SP3",
+      "allowedValues": [
+        "12",
+        "12-SP1",
+        "12-SP2",
+        "12-SP3"
+      ],
+      "metadata": {
+        "description": "Image SKU"
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "VM Admin Username"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "VM Password"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET Name"
+      }
+    },
+    "virtualNetworkResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource Group VNET where the virtual network resides"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet inside the VNET"
+      }
+    },
+    "asgname": {
+      "type": "string",
+      "defaultValue": "WebASG",
+      "metadata": {
+        "description": "Name of the Application Security Group to bind to the VM Nic"
+      }
+    }
+  },
+  "variables": {
+    "accountid": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('existingdiagnosticsStorageResourceGroup'), '/providers/','Microsoft.Storage/storageAccounts/', parameters('existingdiagnosticsStorageAccountName'))]",
+    "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
+    "asgRef": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/applicationSecurityGroups', parameters('asgName'))]",
+    "nicName": "[concat(parameters('vmName'),'_nic')]",
+    "publicIPName": "[concat(parameters('vmName'),'_pip')]"
+
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('publicIPName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "[parameters('publicIPAddressType')]"
+      }
+    },
+    {
+      "apiVersion": "2018-04-01",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('nicName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPName'))]"
+              },
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              },
+              "applicationSecurityGroups": [
+                {
+                  "id": "[variables('asgRef')]"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2017-03-30",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('vmName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        //"[variables('accountid')]",       
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('imagePublisher')]",
+            "offer": "[parameters('imageOffer')]",
+            "sku": "[parameters('imageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(parameters('vmName'),'_OSDisk')]",
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "Standard_LRS"
+            }
+          },
+          "copy": [
+            {
+              "name": "dataDisks",
+              "count": "[parameters('numDataDisks')]",
+              "input": {
+                "lun": "[copyIndex('dataDisks')]",
+                "caching": "[parameters('diskCaching')]",
+                "managedDisk": {
+                  "storageAccountType": "Standard_LRS"
+                },
+                "diskSizeGB": "[parameters('sizeOfDataDisksInGB')]",
+                "name": "[concat(parameters('vmName'), '-datadisk', copyIndex('dataDisks'))]",
+                "createOption": "Empty"
+              }
+            }
+          ]
+          //"dataDisks": [
+          //  {
+          //    "lun": 0,
+          //    "name": "[concat(parameters('vmName'),'_disk1')]",
+          //    "createOption": "Empty",
+          //    "caching": "None",
+          //    "managedDisk": {
+          //      "storageAccountType": "Standard_LRS"
+          //      //"id": "[[concat(parameters('vmName'),'_disk1')]]"
+          //    },
+          //    "diskSizeGB": 1023
+          //  }
+          //]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('http://',parameters('existingdiagnosticsStorageAccountName'),'.blob.core.windows.net')]"
+          }
+        }
+      }
+    }
+  ]
+}
+

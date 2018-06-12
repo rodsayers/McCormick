@@ -2,23 +2,26 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "vmName": {
-      "value": "celwin"
-    },
     "adminUsername": {
       "value": "capadmin"
+    },
+    "vmName": {
+      "value": "SuseVM"
     },
     "adminPassword": {
       "value": "Welcome12345"
     },
-    "windowsOSVersion": {
-      "value": "2016-Datacenter"
+    "vmSize": {
+      "value": "Standard_D2_v2"
     },
-    "VNETname": {
-      "value": "CoreVnet"
+    "numDataDisks": {
+      "value": 3
     },
-    "SubnetName": {
-      "value": "DCSubnet"
+    "sizeOfDataDisksInGB": {
+      "value": 100
+    },
+    "diskcaching": {
+      "value": "None"
     },
     "existingdiagnosticsStorageAccountName": {
       "value": "mcdiag041880"
@@ -26,8 +29,14 @@
     "existingdiagnosticsStorageResourceGroup": {
       "value": "Diagnostics"
     },
-    "vmSize": {
-      "value": "Standard_A2"
+    "virtualNetworkName": {
+      "value": "NorthAmerica"
+    },
+    "virtualNetworkResourceGroup": {
+      "value": "ASGNetwork"
+    },
+    "subnetName": {
+      "value": "ProdSubnet"
     }
   }
 }

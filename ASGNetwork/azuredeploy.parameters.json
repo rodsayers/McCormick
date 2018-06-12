@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualNetworkName": {
+      "value": "NorthAmerica"
+    },
+    "asgName1": {
+      "value": "WebASG"
+    },
+    "asgName2": {
+      "value": "AppASG"
+    },
+    "asgName3": {
+      "value": "DBASG"
+    },
+    "Subnet1Name": { "value": "ProdSubnet" },
+    "Subnet2Name": { "value": "ProdNARestrictedSubnet" }
+  }
+}

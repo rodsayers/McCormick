@@ -2,13 +2,12 @@
 #Run Connect-AzureRmAccount
 Param(
     [string] [Parameter(Mandatory=$true)] $ResourceGroupLocation,
-    #[string] $ResourceGroupLocation = 'eastus2',
-    [string] $ResourceGroupName = 'McCormick-2',
+    [string] $ResourceGroupName = 'TestWinRG',
     [switch] $UploadArtifacts,
     [string] $StorageAccountName,
     [string] $StorageContainerName = $ResourceGroupName.ToLowerInvariant() + '-stageartifacts',
-    [string] $TemplateFile = 'ASG-azuredeploy.json',
-    [string] $TemplateParametersFile = 'ASG-azuredeploy.parameters.json',
+    [string] $TemplateFile = 'azuredeploy.json',
+    [string] $TemplateParametersFile = 'azuredeploy.parameters.json',
     [string] $ArtifactStagingDirectory = '.',
     [string] $DSCSourceFolder = 'DSC',
     [switch] $ValidateOnly

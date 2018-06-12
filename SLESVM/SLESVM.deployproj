@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>9bcdafa1-17cd-474c-a4e6-149fbad10ab4</ProjectGuid>
+    <ProjectGuid>4415744b-ad9f-48c9-9ba1-eec071aa0ecc</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup>
     <PrepareForBuildDependsOn>
@@ -25,9 +25,6 @@
   <ItemGroup>
     <Content Include="azuredeploy.parameters.json" />
     <Content Include="azuredeploy.json" />
-    <None Include="ASG-azuredeploy.json" />
-    <None Include="ASG-azuredeploy.parameters.json" />
-    <None Include="Deploy-ASG-AzureResourceGroup.ps1" />
     <None Include="Deployment.targets">
       <Visible>False</Visible>
     </None>
