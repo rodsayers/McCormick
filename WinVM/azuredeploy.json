@@ -128,9 +128,9 @@
         "description": "Name of the subnet inside the VNET"
       }
     },
-    "asgname": {
+    "asgName": {
       "type": "string",
-      "defaultValue": "WebASG",
+      "defaultValue": "DMZ_ASG",
       "metadata": {
         "description": "Name of the Application Security Group to bind to the VM Nic"
       }

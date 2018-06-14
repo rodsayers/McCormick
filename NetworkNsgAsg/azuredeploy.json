@@ -1,0 +1,528 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.1",
+  "parameters": {
+    //"virtualNetworkResourceGroupName": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "The resource group where the existing VNet is located."
+    //  }
+    //},
+    //"virtualNetworkName": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "The name of the existing VNet"
+    //  }
+    //},
+    //"subnetName": {
+    //  "type": "string",
+    //  "defaultValue": "default",
+    //  "metadata": {
+    //    "description": "The name of the existing subnet."
+    //  }
+    //}
+  },
+  "variables": {
+    "TargetNSG": "ProdNASubnet1_NSG",
+    "DMZ_ASG": "DMZ_ASG",
+    "App_ASG": "App_ASG",
+    "DB_ASG": "DB_ASG",
+    "Shared_ASG": "Shared_ASG"
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-10-01",
+      "type": "Microsoft.Network/applicationSecurityGroups",
+      "name": "[variables('DMZ_ASG')]",
+      "location": "[resourceGroup().location]",
+      "properties": {}
+    },
+    {
+      "apiVersion": "2017-10-01",
+      "type": "Microsoft.Network/applicationSecurityGroups",
+      "name": "[variables('App_ASG')]",
+      "location": "[resourceGroup().location]",
+      "properties": {}
+    },
+    {
+      "apiVersion": "2017-10-01",
+      "type": "Microsoft.Network/applicationSecurityGroups",
+      "name": "[variables('DB_ASG')]",
+      "location": "[resourceGroup().location]",
+      "properties": {}
+    },
+    {
+      "apiVersion": "2017-10-01",
+      "type": "Microsoft.Network/applicationSecurityGroups",
+      "name": "[variables('Shared_ASG')]",
+      "location": "[resourceGroup().location]",
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('TargetNSG')]",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2018-03-01",
+      "dependsOn": [
+        "[concat('Microsoft.Network/applicationSecurityGroups/', variables('DMZ_ASG'))]",
+        "[concat('Microsoft.Network/applicationSecurityGroups/', variables('App_ASG'))]",
+        "[concat('Microsoft.Network/applicationSecurityGroups/', variables('DB_ASG'))]",
+        "[concat('Microsoft.Network/applicationSecurityGroups/', variables('Shared_ASG'))]"
+      ],
+      "properties": {
+        "securityRules": [
+
+          {
+            "name": "ToJump",
+            "properties": {
+              "description": "Allow access to jump box",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "Internet",
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DMZ_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+
+          {
+            "name": "FromJumpAPP",
+            "properties": {
+              "description": "des",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRanges": [ "3389", "22", "443" ],
+              //"sourceAddressPrefix": "Internet",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DMZ_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('App_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "FromJumpDB",
+            "properties": {
+              "description": "description here",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "8000",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DMZ_ASG'))]"
+
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DB_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 130,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "BlockRDP",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRanges": [ "3389", "22" ],
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 140,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "ApptoShared",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('App_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 150,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "DBtoShared",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DB_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 160,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "DMZtoShared",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DMZ_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "access": "Deny",
+              "priority": 170,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "CorpInternaltoShared",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefixes": [ "10.0.0.0/8", "172.16.0.0/12" ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 180,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "ApptoDB",
+            "properties": {
+              "description": "description here",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "8000",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('App_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DB_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 190,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "CorpInternaltoApp",
+            "properties": {
+              "description": "description here",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefixes": [ "10.0.0.0/8", "172.16.0.0/12" ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('App_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 200,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "CorpInternaltoDBMgmt",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRanges": [ "3389", "22" ],
+              "sourceAddressPrefixes": [ "10.0.0.0/8", "172.16.0.0/12" ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DB_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 210,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "CorpInternaltoDB",
+            "properties": {
+              "description": "description here",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "8000",
+              "sourceAddressPrefixes": [ "10.0.0.0/8", "172.16.0.0/12" ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DB_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 220,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "SharedJumptoApp",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('App_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 230,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "SharedJumptoDB",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DB_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 240,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "ApptoSharedOut",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('App_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "DBtosharedOut",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DB_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "DMZtoSharedOut",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DMZ_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 120,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "SharedtoCorpInternal",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "destinationAddressPrefix": "10.0.0.0/8",
+              "access": "Allow",
+              "priority": 130,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "SharedJumptoAppOut",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('App_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 140,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "SharedJumptoDBOut",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "destinationApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DB_ASG'))]"
+                }
+              ],
+              "access": "Allow",
+              "priority": 150,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "SharedtoInternet",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('Shared_ASG'))]"
+                }
+              ],
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 160,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "DMZtoInternet",
+            "properties": {
+              "description": "description here",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceApplicationSecurityGroups": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('DMZ_ASG'))]"
+                }
+              ],
+              "destinationAddressPrefix": "internet",
+              "access": "Allow",
+              "priority": 190,
+              "direction": "Outbound"
+            }
+          }
+
+        ] //endsecurity
+      }
+    }
+  ],
+  "outputs": {}
+}

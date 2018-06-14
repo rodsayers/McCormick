@@ -9,11 +9,17 @@ Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "SAPHex", "SAPHex\SAPHex.dep
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Storage", "Storage\Storage.deployproj", "{43C43971-C893-4C23-A558-C626378E7962}"
 EndProject
-Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "ASGNetwork", "ASGNetwork\ASGNetwork.deployproj", "{396A6407-0B7D-4F90-88B5-4D7ED9706953}"
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "CoreVnetNA", "ASGNetwork\CoreVnetNA.deployproj", "{396A6407-0B7D-4F90-88B5-4D7ED9706953}"
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "SLESVM", "SLESVM\SLESVM.deployproj", "{4415744B-AD9F-48C9-9BA1-EEC071AA0ECC}"
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "WinVM", "WinVM\WinVM.deployproj", "{81DCC74D-EC51-4F43-BA97-665209623F58}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "NetworkSecurityGroups", "NetworkSecurityGroups\NetworkSecurityGroups.deployproj", "{8A599A6B-AE06-4EC0-87DD-8D362EC23C5B}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "NetworkNsgAsg", "NetworkNsgAsg\NetworkNsgAsg.deployproj", "{E9E11AC2-659F-4167-8ED9-7BDF8BFBEF07}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "CelonisHanaVM", "CelonisHanaVM\CelonisHanaVM.deployproj", "{D49DA297-A475-4459-BEAD-31E907AB9DC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +51,18 @@ Global
 		{81DCC74D-EC51-4F43-BA97-665209623F58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81DCC74D-EC51-4F43-BA97-665209623F58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DCC74D-EC51-4F43-BA97-665209623F58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A599A6B-AE06-4EC0-87DD-8D362EC23C5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A599A6B-AE06-4EC0-87DD-8D362EC23C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A599A6B-AE06-4EC0-87DD-8D362EC23C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A599A6B-AE06-4EC0-87DD-8D362EC23C5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9E11AC2-659F-4167-8ED9-7BDF8BFBEF07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9E11AC2-659F-4167-8ED9-7BDF8BFBEF07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9E11AC2-659F-4167-8ED9-7BDF8BFBEF07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9E11AC2-659F-4167-8ED9-7BDF8BFBEF07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D49DA297-A475-4459-BEAD-31E907AB9DC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D49DA297-A475-4459-BEAD-31E907AB9DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D49DA297-A475-4459-BEAD-31E907AB9DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D49DA297-A475-4459-BEAD-31E907AB9DC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

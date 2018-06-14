@@ -18,7 +18,8 @@
       "type": "string",
       "defaultValue": "Dynamic",
       "allowedValues": [
-        "Dynamic"
+        "Dynamic",
+        "Static"
       ],
       "metadata": {
         "description": "Type of Public Address"
@@ -32,48 +33,56 @@
     },
     "vmSize": {
       "type": "string",
-      "defaultValue": "Standard_A1_v2",
+      "defaultValue": "Standard_DS12_v2",
       "allowedValues": [
-        "Standard_A1_v2",
-        "Standard_A2m_v2",
-        "Standard_A2_v2",
-        "Standard_A4m_v2",
-        "Standard_A4_v2",
-        "Standard_A8m_v2",
-        "Standard_A8_v2",
-        "Standard_D1_v2",
-        "Standard_D2_v2",
-        "Standard_D3_v2",
-        "Standard_D4_v2"
+        "Standard_DS12_v2",
+        "Standard_DSS13_v2",
+        "Standard_DS14_v2",
+        "Standard_E16_v3",
+        "Standard_E32_v3",
+        "Standard_M64_v3"
 
       ],
       "metadata": {
         "description": "Size of the VM"
       }
     },
-    "numDataDisks": {
-      "type": "int",
-      "defaultValue": 4,
-      "minValue": 0,
-      "maxValue": 64,
-      "metadata": {
-        "description": "This parameter allows the user to select the number of disks they want"
-      }
-    },
-    "sizeOfDataDisksInGB": {
-      "type": "int",
-      "defaultValue": 100,
-      "metadata": {
-        "description": "The size of each disk in GB"
-      }
-    },
-    "diskcaching": {
+    "storageAccountType": {
       "type": "string",
-      "defaultValue": "None",
-      "metadata": {
-        "description": "Data disk Caching mode"
-      }
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Premium_LRS",
+        "Premium_GRS"
+      ],
+        "metadata": {
+          "description": "Data disk Caching mode"
+        }
     },
+    //"numDataDisks": {
+    //  "type": "int",
+    //  "defaultValue": 4,
+    //  "minValue": 0,
+    //  "maxValue": 64,
+    //  "metadata": {
+    //    "description": "This parameter allows the user to select the number of disks they want"
+    //  }
+    //},
+    //"sizeOfDataDisksInGB": {
+    //  "type": "int",
+    //  "defaultValue": 100,
+    //  "metadata": {
+    //    "description": "The size of each disk in GB"
+    //  }
+    //},
+    //"diskcaching": {
+    //  "type": "string",
+    //  "defaultValue": "None",
+    //  "metadata": {
+    //    "description": "Data disk Caching mode"
+    //  }
+    //},
     "imagePublisher": {
       "type": "string",
       "defaultValue": "SUSE",
@@ -133,7 +142,7 @@
     },
     "asgname": {
       "type": "string",
-      "defaultValue": "WebASG",
+      "defaultValue": "DB_ASG",
       "metadata": {
         "description": "Name of the Application Security Group to bind to the VM Nic"
       }
@@ -171,7 +180,7 @@
           {
             "name": "ipconfig1",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAllocationMethod": "[parameters('publicIPAddressType')]",
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPName'))]"
               },
@@ -218,38 +227,115 @@
             "caching": "ReadWrite",
             "createOption": "FromImage",
             "managedDisk": {
-              "storageAccountType": "Standard_LRS"
+              "storageAccountType": "[concat(parameters('storageAccountType'))]"
             }
           },
-          "copy": [
-            {
-              "name": "dataDisks",
-              "count": "[parameters('numDataDisks')]",
-              "input": {
-                "lun": "[copyIndex('dataDisks')]",
-                "caching": "[parameters('diskCaching')]",
-                "managedDisk": {
-                  "storageAccountType": "Standard_LRS"
-                },
-                "diskSizeGB": "[parameters('sizeOfDataDisksInGB')]",
-                "name": "[concat(parameters('vmName'), '-datadisk', copyIndex('dataDisks'))]",
-                "createOption": "Empty"
-              }
-            }
-          ]
-          //"dataDisks": [
+          //"copy": [
           //  {
-          //    "lun": 0,
-          //    "name": "[concat(parameters('vmName'),'_disk1')]",
-          //    "createOption": "Empty",
-          //    "caching": "None",
-          //    "managedDisk": {
-          //      "storageAccountType": "Standard_LRS"
-          //      //"id": "[[concat(parameters('vmName'),'_disk1')]]"
-          //    },
-          //    "diskSizeGB": 1023
+          //    "name": "dataDisks",
+          //    "count": "[parameters('numDataDisks')]",
+          //    "input": {
+          //      "lun": "[copyIndex('dataDisks')]",
+          //      "caching": "[parameters('diskCaching')]",
+          //      "managedDisk": {
+          //        "storageAccountType": "Standard_LRS"
+          //      },
+          //      "diskSizeGB": "[parameters('sizeOfDataDisksInGB')]",
+          //      "name": "[concat(parameters('vmName'), '-datadisk', copyIndex('dataDisks'))]",
+          //      "createOption": "Empty"
+          //    }
           //  }
           //]
+          "dataDisks": [
+            {
+              "lun": 0,
+              "name": "[concat(parameters('vmName'),'_disk0')]",
+              "createOption": "Empty",
+              "caching": "None",
+              "managedDisk": {
+                "storageAccountType": "[concat(parameters('storageAccountType'))]"
+                //"id": "[[concat(parameters('vmName'),'_disk1')]]"
+              },
+              "diskSizeGB": 1024
+            },
+            {
+              "lun": 1,
+              "name": "[concat(parameters('vmName'),'_disk1')]",
+              "createOption": "Empty",
+              "caching": "None",
+              "managedDisk": {
+                "storageAccountType": "[concat(parameters('storageAccountType'))]"
+                //"id": "[[concat(parameters('vmName'),'_disk1')]]"
+              },
+              "diskSizeGB": 1024
+            },
+            {
+              "lun": 2,
+              "name": "[concat(parameters('vmName'),'_disk2')]",
+              "createOption": "Empty",
+              "caching": "None",
+              "managedDisk": {
+                "storageAccountType": "[concat(parameters('storageAccountType'))]"
+                //"id": "[[concat(parameters('vmName'),'_disk1')]]"
+              },
+              "diskSizeGB": 512
+            },
+            {
+              "lun": 3,
+              "name": "[concat(parameters('vmName'),'_disk3')]",
+              "createOption": "Empty",
+              "caching": "None",
+              "managedDisk": {
+                "storageAccountType": "[concat(parameters('storageAccountType'))]"
+                //"id": "[[concat(parameters('vmName'),'_disk1')]]"
+              },
+              "diskSizeGB": 512
+            },
+            {
+              "lun": 4,
+              "name": "[concat(parameters('vmName'),'_disk4')]",
+              "createOption": "Empty",
+              "caching": "ReadOnly",
+              "managedDisk": {
+                "storageAccountType": "[concat(parameters('storageAccountType'))]"
+                //"id": "[[concat(parameters('vmName'),'_disk1')]]"
+              },
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 5,
+              "name": "[concat(parameters('vmName'),'_disk5')]",
+              "createOption": "Empty",
+              "caching": "None",
+              "managedDisk": {
+                "storageAccountType": "[concat(parameters('storageAccountType'))]"
+                //"id": "[[concat(parameters('vmName'),'_disk1')]]"
+              },
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 6,
+              "name": "[concat(parameters('vmName'),'_disk6')]",
+              "createOption": "Empty",
+              "caching": "None",
+              "managedDisk": {
+                "storageAccountType": "[concat(parameters('storageAccountType'))]"
+                //"id": "[[concat(parameters('vmName'),'_disk1')]]"
+              },
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 7,
+              "name": "[concat(parameters('vmName'),'_disk7')]",
+              "createOption": "Empty",
+              "caching": "None",
+              "managedDisk": {
+                "storageAccountType": "[concat(parameters('storageAccountType'))]"
+                //"id": "[[concat(parameters('vmName'),'_disk1')]]"
+              },
+              "diskSizeGB": 128
+            }
+          ]
         },
         "networkProfile": {
           "networkInterfaces": [

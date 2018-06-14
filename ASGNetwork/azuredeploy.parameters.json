@@ -5,16 +5,9 @@
     "virtualNetworkName": {
       "value": "NorthAmerica"
     },
-    "asgName1": {
-      "value": "WebASG"
-    },
-    "asgName2": {
-      "value": "AppASG"
-    },
-    "asgName3": {
-      "value": "DBASG"
-    },
-    "Subnet1Name": { "value": "ProdSubnet" },
-    "Subnet2Name": { "value": "ProdNARestrictedSubnet" }
+    "Subnet1Name": { "value": "ProdNASubnet1" },
+    "Subnet1NSGName": {
+      "value": "ProdNASubnet1_NSG"
+    }
   }
 }

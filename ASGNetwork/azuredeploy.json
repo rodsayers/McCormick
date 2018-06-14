@@ -30,50 +30,6 @@
         "description": "This is CIDR prefix for the Prod Subnet"
       }
     },
-    "Subnet2Name": {
-      "type": "string",
-      "defaultValue": "ProdNARestricted",
-      "metadata": {
-        "description": "This is name of Subnet2"
-      }
-    },
-
-    "Subnet2NSGName": {
-      "type": "string",
-      "defaultValue": "ProdNARestricted_NSG",
-      "metadata": {
-        "description": "This is name of the networkSecurityGroup that will be assigned to Subnet2"
-      }
-    },
-    "Subnet2Prefix": {
-      "type": "string",
-      "defaultValue": "10.112.2.0/24",
-      "metadata": {
-        "description": "This is CIDR prefix for the ProdNARestricted Subnet"
-      }
-    },
-    "asgName1": {
-      "type": "string",
-      "defaultValue": "WebASG",
-      "metadata": {
-        "description": "Name of Web Application Security Group."
-      }
-    },
-    "asgName2": {
-      "type": "string",
-      "defaultValue": "AppASG",
-      "metadata": {
-        "description": "Name of App Application Security Group."
-      }
-    },
-
-    "asgName3": {
-      "type": "string",
-      "defaultValue": "dbASG",
-      "metadata": {
-        "description": "Name of DB Application Security Group."
-      }
-    },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
@@ -96,8 +52,7 @@
       "name": "[parameters('virtualNetworkName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('Subnet1NSGName'))]",
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('Subnet2NSGName'))]"
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('Subnet1NSGName'))]"
       ],
       "properties": {
         "addressSpace": {
@@ -114,39 +69,9 @@
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('Subnet1NSGName'))]"
               }
             }
-          },
-          {
-            "name": "[parameters('Subnet2Name')]",
-            "properties": {
-              "addressPrefix": "[parameters('Subnet2Prefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('Subnet2NSGName'))]"
-              }
-            }
           }
         ]
       }
-    },
-    {
-      "apiVersion": "2017-10-01",
-      "type": "Microsoft.Network/applicationSecurityGroups",
-      "name": "[parameters('asgName1')]",
-      "location": "[resourceGroup().location]",
-      "properties": {}
-    },
-    {
-      "apiVersion": "2017-10-01",
-      "type": "Microsoft.Network/applicationSecurityGroups",
-      "name": "[parameters('asgName2')]",
-      "location": "[resourceGroup().location]",
-      "properties": {}
-    },
-    {
-      "apiVersion": "2017-10-01",
-      "type": "Microsoft.Network/applicationSecurityGroups",
-      "name": "[parameters('asgName3')]",
-      "location": "[resourceGroup().location]",
-      "properties": {}
     },
     {
       "apiVersion": "2018-02-01",
@@ -154,119 +79,8 @@
       "name": "[parameters('Subnet1NSGName')]",
       "location": "[parameters('location')]",
       "properties": {
-        "securityRules": [
-          {
-            "name": "Allow_ProdNARestricted",
-            "properties": {
-              "description": "Allow ProdNARestricted Subnet",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "443",
-              "sourceAddressPrefix": "[parameters('Subnet2Prefix')]",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Block_RDP_Internet",
-            "properties": {
-              "description": "Block RDP",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "3389",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
-              "access": "Deny",
-              "priority": 101,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Block_Internet_Outbound",
-            "properties": {
-              "description": "Block Internet",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "Internet",
-              "access": "Deny",
-              "priority": 200,
-              "direction": "Outbound"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "apiVersion": "2018-02-01",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[parameters('Subnet2NSGName')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "Allow_Prod",
-            "properties": {
-              "description": "Allow Prod Subnet",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "1433",
-              "sourceAddressPrefix": "[parameters('Subnet1Prefix')]",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "WebASG-HTTP-80",
-            "properties": {
-              "description": "Allow Web ASG in on HTTP 80",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "80",
-              "sourceAddressPrefix": "Internet",
-              "destinationApplicationSecurityGroups": [
-                {
-                  "id": "[resourceId('Microsoft.Network/applicationSecurityGroups',parameters('asgName1'))]"
-                }
-              ],
-              "access": "Allow",
-              "priority": 101,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Block_Prod",
-            "properties": {
-              "description": "Block Prod Subnet",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "[parameters('Subnet1Prefix')]",
-              "destinationAddressPrefix": "*",
-              "access": "Deny",
-              "priority": 102,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Block_Internet",
-            "properties": {
-              "description": "Block Internet",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "Internet",
-              "access": "Deny",
-              "priority": 200,
-              "direction": "Outbound"
-            }
-          }
+        "securityRules": [         
+
         ]
       }
     }

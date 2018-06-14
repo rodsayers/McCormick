@@ -6,22 +6,17 @@
       "value": "capadmin"
     },
     "vmName": {
-      "value": "WinVM"
+      "value": "SuseVM"
     },
     "adminPassword": {
       "value": "Welcome12345"
     },
     "vmSize": {
-      "value": "Standard_D2_v2"
+      "value": "Standard_DS12_v2"
     },
-    "numDataDisks": {
-      "value": 1
-    },
-    "sizeOfDataDisksInGB": {
-      "value": 100
-    },
-    "diskcaching": {
-      "value": "None"
+
+    "storageAccountType": {
+      "value": "Premium_LRS"
     },
       "existingdiagnosticsStorageAccountName": {
         "value": "mcdiag041880"
@@ -33,13 +28,10 @@
         "value": "NorthAmerica"
       },
       "virtualNetworkResourceGroup": {
-        "value": "CoreVnetNA"
+        "value": "ASGNetwork"
       },
       "subnetName": {
-        "value": "ProdNASubnet1"
-      },
-      "asgName": {
-        "value": "DMZ_ASG"
+        "value": "ProdSubnet"
       }
     }
   }
