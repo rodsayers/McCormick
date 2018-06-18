@@ -6,7 +6,7 @@
       "value": "capadmin"
     },
     "vmName": {
-      "value": "SuseVM"
+      "value": "test"
     },
     "adminPassword": {
       "value": "Welcome12345"
@@ -15,7 +15,7 @@
       "value": "Standard_D2_v2"
     },
     "numDataDisks": {
-      "value": 3
+      "value": 1
     },
     "sizeOfDataDisksInGB": {
       "value": 100
@@ -33,10 +33,13 @@
       "value": "NorthAmerica"
     },
     "virtualNetworkResourceGroup": {
-      "value": "ASGNetwork"
+      "value": "CoreVnetNA"
     },
     "subnetName": {
-      "value": "ProdSubnet"
+      "value": "ProdNASubnet1"
+    },
+    "asgname": {
+      "value": "APP_ASG"
     }
   }
 }

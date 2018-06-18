@@ -2,7 +2,7 @@
 #Run Connect-AzureRmAccount
 Param(
     [string] [Parameter(Mandatory=$true)] $ResourceGroupLocation,
-    [string] $ResourceGroupName = 'TestRG',
+    [string] $ResourceGroupName = 'CelonisHana',
     [switch] $UploadArtifacts,
     [string] $StorageAccountName,
     [string] $StorageContainerName = $ResourceGroupName.ToLowerInvariant() + '-stageartifacts',
