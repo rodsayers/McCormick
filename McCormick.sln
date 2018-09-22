@@ -21,6 +21,8 @@ Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "NetworkNsgAsg", "NetworkNsg
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "CelonisHanaVM", "CelonisHanaVM\CelonisHanaVM.deployproj", "{D49DA297-A475-4459-BEAD-31E907AB9DC2}"
 EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "LoadBalancer", "LoadBalancer\LoadBalancer.deployproj", "{297D7186-E819-4525-ADA3-BDC74577726B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{D49DA297-A475-4459-BEAD-31E907AB9DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D49DA297-A475-4459-BEAD-31E907AB9DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D49DA297-A475-4459-BEAD-31E907AB9DC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{297D7186-E819-4525-ADA3-BDC74577726B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{297D7186-E819-4525-ADA3-BDC74577726B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{297D7186-E819-4525-ADA3-BDC74577726B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{297D7186-E819-4525-ADA3-BDC74577726B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
