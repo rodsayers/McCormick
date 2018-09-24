@@ -1,0 +1,221 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualNetworkResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource Group VNET where the virtual network resides"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET Name"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet inside the VNET"
+      }
+    },
+    "loadBalancerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Load Balancer"
+      }
+    },
+    "publicIPAddressName1": {
+      "type": "string",
+      "defaultValue": "PIP1",
+      "metadata": {
+        "description": "Existing static Public IP name"
+      }
+    },
+    "publicIPAddressName2": {
+      "type": "string",
+      "defaultValue": "PIP2",
+      "metadata": {
+        "description": "Existing static Public IP name"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    }
+  },
+  "variables": {
+    "virtualNetworkResourceGroup": "[parameters('virtualNetworkResourceGroup')]",
+    "virtualNetworkName": "[parameters('virtualNetworkName')]",
+    "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "subnetName": "[parameters('subnetName')]",
+    "loadBalancerName": "[parameters('loadBalancerName')]",
+    //"loadBalancerIP": "[parameters('loadBalancerIP')]",
+    "nicName": "networkInterface1",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
+    //"subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
+    "publicIPAddressName1": "[parameters('publicIPAddressName1')]",
+    "publicIPAddressName2": "[parameters('publicIPAddressName2')]",
+    "publicIPAddressID1": "[resourceId(resourceGroup().name,'Microsoft.Network/publicIPAddresses',variables('publicIPAddressName1'))]",
+    "publicIPAddressID2": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName2'))]",
+    "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
+    "frontEndIPConfigID1": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]",
+    "frontEndIPConfigID2": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd2')]",
+    "lbBackendPoolID1": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
+    "lbBackendPoolID2": "[concat(variables('lbID'),'/backendAddressPools/BackendPool2')]",
+    "lbProbeID1": "[concat(variables('lbID'),'/probes/lbprobe1')]",
+    "lbProbeID2": "[concat(variables('lbID'),'/probes/lbprobe2')]"
+  },
+  "resources": [
+   
+    //{
+    //  "apiVersion": "2015-06-15",
+    //  "type": "Microsoft.Network/networkInterfaces",
+    //  "name": "[variables('nicName')]",
+    //  "location": "[parameters('location')]",
+    //  "dependsOn": [
+    //    "[concat('Microsoft.Network/loadBalancers/', variables('loadBalancerName'))]"
+    //  ],
+    //  "properties": {
+    //    "ipConfigurations": [
+    //      {
+    //        "name": "ipconfig1",
+    //        "properties": {
+    //          "privateIPAllocationMethod": "Dynamic",
+    //          "subnet": {
+    //            "id": "[variables('subnetRef')]"
+    //          },
+    //          "loadBalancerBackendAddressPools": [
+    //            {
+    //              "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')),'/backendAddressPools/loadBalancerBackEnd')]"
+    //            }
+    //          ]
+    //        }
+    //      }
+    //    ]
+    //  }
+    //},
+    {
+      "apiVersion": "2015-06-15",
+      "name": "[variables('loadBalancerName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        //"[variables('subnetRef')]"
+        //"[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        //need to fix
+        "[resourceId(resourceGroup().name,'Microsoft.Network/publicIPAddresses', variables('publicIPAddressName1'))]"
+        //"[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName2'))]"
+
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "loadBalancerFrontEnd1",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[variables('publicIPAddressID1')]"
+              }
+            }
+          },
+          {
+            "name": "loadBalancerFrontEnd2",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[variables('publicIPAddressID2')]"
+              }
+            }
+          }
+
+        ],
+        "backendAddressPools": [
+          {
+            "name": "BackendPool1"
+          },
+          {
+            "name": "BackendPool2"            
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID1')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/backendAddressPools/BackendPool1')]"
+              },
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "idleTimeoutInMinutes": 15
+            },
+            "name": "lbrule"
+          },
+          {
+            "name": "LBRuleForVIP1",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID1')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID1')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 443,
+              "backendPort": 443,
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
+              }
+            }
+          },
+          {
+            "name": "LBRuleForVIP2",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID2')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID2')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 443,
+              "backendPort": 444,
+              "probe": {
+                "id": "[variables('lbProbeID2')]"
+              }
+            }
+          }
+
+        ],
+        "probes": [
+          {
+            "name": "lbprobe1",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 80,
+              "intervalInSeconds": 15,
+              "numberOfProbes": 2
+            }
+          },
+          {
+            "name": "lbprobe2",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 445,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
