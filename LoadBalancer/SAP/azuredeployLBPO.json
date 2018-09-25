@@ -293,8 +293,8 @@
                 "id": "[variables('lbProbeID1')]"
               },
               "protocol": "Tcp",
-              "frontendPort": 50014,
-              "backendPort": 50014,
+              "frontendPort": 50114,
+              "backendPort": 50114,
               "idleTimeoutInMinutes": 30
             }
           },          

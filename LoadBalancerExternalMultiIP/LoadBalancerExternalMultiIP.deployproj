@@ -31,6 +31,7 @@
     <Content Include="Deploy-AzureResourceGroup.ps1" />
     <Content Include="README.md" />
     <None Include="SAP\azuredeployExtLBWD.json" />
+    <None Include="SAP\azuredeployExtLBWD.parameters.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
 </Project>

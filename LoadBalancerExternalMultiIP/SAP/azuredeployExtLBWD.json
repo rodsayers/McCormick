@@ -70,10 +70,14 @@
   },
   "resources": [
     {
-      "apiVersion": "2015-06-15",
+      "apiVersion": "2017-08-01",
       "name": "[variables('loadBalancerName')]",
       "type": "Microsoft.Network/loadBalancers",
       "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard",
+        "tier": "Regional"
+      },
       "dependsOn": [
       ],
       "properties": {
@@ -101,7 +105,7 @@
             "name": "BackendPool1"
           },
           {
-            "name": "BackendPool2"            
+            "name": "BackendPool2"
           }
         ],
         "loadBalancingRules": [
@@ -112,7 +116,7 @@
                 "id": "[variables('frontEndIPConfigID1')]"
               },
               "backendAddressPool": {
-               "id": "[variables('lbBackendPoolID1')]"
+                "id": "[variables('lbBackendPoolID1')]"
               },
               "probe": {
                 "id": "[variables('lbProbeID1')]"

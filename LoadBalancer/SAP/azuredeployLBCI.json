@@ -26,7 +26,13 @@
         "description": "Name of the Load Balancer"
       }
     },
-    "loadBalancerIP": {
+    "loadBalancerIP1": {
+      "type": "string",
+      "metadata": {
+        "description": "Desired static IP"
+      }
+    },
+    "loadBalancerIP2": {
       "type": "string",
       "metadata": {
         "description": "Desired static IP"
@@ -46,11 +52,13 @@
     "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
     "subnetName": "[parameters('subnetName')]",
     "loadBalancerName": "[parameters('loadBalancerName')]",
-    "loadBalancerIP": "[parameters('loadBalancerIP')]",
+    "loadBalancerIP1": "[parameters('loadBalancerIP1')]",
+    "loadBalancerIP2": "[parameters('loadBalancerIP2')]",
     "nicName": "networkInterface1",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
     "frontEndIPConfigID1": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]",
+    "frontEndIPConfigID2": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd2')]",
     "lbBackendPoolID1": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
     "lbProbeID1": "[concat(variables('lbID'),'/probes/healthprobeASCS')]",
     "lbProbeID2": "[concat(variables('lbID'),'/probes/healthprobeERS')]"
@@ -71,7 +79,18 @@
               "subnet": {
                 "id": "[variables('subnetRef')]"
               },
-              "privateIPAddress": "[variables('loadBalancerIP')]",
+              "privateIPAddress": "[variables('loadBalancerIP1')]",
+
+              "privateIPAllocationMethod": "Static"
+            }
+          },
+          {
+            "name": "loadBalancerFrontEnd2",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              },
+              "privateIPAddress": "[variables('loadBalancerIP2')]",
 
               "privateIPAllocationMethod": "Static"
             }
@@ -98,7 +117,7 @@
               "protocol": "Tcp",
               "frontendPort": 3200,
               "backendPort": 3200,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -116,7 +135,7 @@
               "protocol": "Tcp",
               "frontendPort": 3201,
               "backendPort": 3201,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -134,7 +153,7 @@
               "protocol": "Tcp",
               "frontendPort": 3600,
               "backendPort": 3600,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -152,7 +171,7 @@
               "protocol": "Tcp",
               "frontendPort": 3601,
               "backendPort": 3601,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -170,7 +189,7 @@
               "protocol": "Tcp",
               "frontendPort": 3900,
               "backendPort": 3900,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -188,7 +207,7 @@
               "protocol": "Tcp",
               "frontendPort": 3901,
               "backendPort": 3901,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -206,7 +225,7 @@
               "protocol": "Tcp",
               "frontendPort": 8100,
               "backendPort": 8100,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -224,7 +243,7 @@
               "protocol": "Tcp",
               "frontendPort": 8101,
               "backendPort": 8101,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -242,14 +261,15 @@
               "protocol": "Tcp",
               "frontendPort": 50013,
               "backendPort": 50013,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true",
+              "enableFloatingIP": "true"
             }
           },
           {
             "name": "lbrule10",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID1')]"
+                "id": "[variables('frontEndIPConfigID2')]"
               },
               "backendAddressPool": {
                 "id": "[variables('lbBackendPoolID1')]"
@@ -260,7 +280,7 @@
               "protocol": "Tcp",
               "frontendPort": 50013,
               "backendPort": 50013,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -278,7 +298,7 @@
               "protocol": "Tcp",
               "frontendPort": 50113,
               "backendPort": 50113,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -296,14 +316,14 @@
               "protocol": "Tcp",
               "frontendPort": 50014,
               "backendPort": 50014,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
             "name": "lbrule13",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID1')]"
+                "id": "[variables('frontEndIPConfigID2')]"
               },
               "backendAddressPool": {
                 "id": "[variables('lbBackendPoolID1')]"
@@ -314,7 +334,7 @@
               "protocol": "Tcp",
               "frontendPort": 50014,
               "backendPort": 50014,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -332,7 +352,7 @@
               "protocol": "Tcp",
               "frontendPort": 50114,
               "backendPort": 50114,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -350,14 +370,14 @@
               "protocol": "Tcp",
               "frontendPort": 50016,
               "backendPort": 50016,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
             "name": "lbrule16",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID1')]"
+                "id": "[variables('frontEndIPConfigID2')]"
               },
               "backendAddressPool": {
                 "id": "[variables('lbBackendPoolID1')]"
@@ -368,7 +388,7 @@
               "protocol": "Tcp",
               "frontendPort": 50016,
               "backendPort": 50016,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
@@ -386,14 +406,14 @@
               "protocol": "Tcp",
               "frontendPort": 50116,
               "backendPort": 50116,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
             "name": "lbrule18",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID1')]"
+                "id": "[variables('frontEndIPConfigID2')]"
               },
               "backendAddressPool": {
                 "id": "[variables('lbBackendPoolID1')]"
@@ -404,14 +424,14 @@
               "protocol": "Tcp",
               "frontendPort": 3300,
               "backendPort": 3300,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           },
           {
             "name": "lbrule19",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID1')]"
+                "id": "[variables('frontEndIPConfigID2')]"
               },
               "backendAddressPool": {
                 "id": "[variables('lbBackendPoolID1')]"
@@ -422,7 +442,7 @@
               "protocol": "Tcp",
               "frontendPort": 3301,
               "backendPort": 3301,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30, "enableFloatingIP": "true"
             }
           }
         ],
@@ -440,7 +460,7 @@
             "name": "healthprobeERS",
             "properties": {
               "protocol": "Tcp",
-              "port": 61000,
+              "port": 62102,
               "intervalInSeconds": 15,
               "numberOfProbes": 2
             }
