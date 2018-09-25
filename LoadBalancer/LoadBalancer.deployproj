@@ -31,6 +31,8 @@
     </None>
     <Content Include="Deploy-AzureResourceGroup.ps1" />
     <Content Include="README.md" />
+    <None Include="SAP\azuredeployLBNFS.json" />
+    <None Include="SAP\azuredeployLBPO.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
 </Project>

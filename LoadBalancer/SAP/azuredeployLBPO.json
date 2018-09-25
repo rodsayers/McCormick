@@ -1,4 +1,4 @@
-{
+﻿{
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
@@ -52,8 +52,7 @@
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
     "frontEndIPConfigID1": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]",
     "lbBackendPoolID1": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
-    "lbProbeID1": "[concat(variables('lbID'),'/probes/healthprobeASCS')]",
-    "lbProbeID2": "[concat(variables('lbID'),'/probes/healthprobeERS')]"
+    "lbProbeID1": "[concat(variables('lbID'),'/probes/healthprobepo')]"
   },
   "resources": [
     {
@@ -255,11 +254,11 @@
                 "id": "[variables('lbBackendPoolID1')]"
               },
               "probe": {
-                "id": "[variables('lbProbeID2')]"
+                "id": "[variables('lbProbeID1')]"
               },
               "protocol": "Tcp",
-              "frontendPort": 50013,
-              "backendPort": 50013,
+              "frontendPort": 50113,
+              "backendPort": 50113,
               "idleTimeoutInMinutes": 30
             }
           },
@@ -276,11 +275,11 @@
                 "id": "[variables('lbProbeID1')]"
               },
               "protocol": "Tcp",
-              "frontendPort": 50113,
-              "backendPort": 50113,
+              "frontendPort": 50014,
+              "backendPort": 50014,
               "idleTimeoutInMinutes": 30
             }
-          },
+          },          
           {
             "name": "lbrule12",
             "properties": {
@@ -298,7 +297,7 @@
               "backendPort": 50014,
               "idleTimeoutInMinutes": 30
             }
-          },
+          },          
           {
             "name": "lbrule13",
             "properties": {
@@ -309,11 +308,11 @@
                 "id": "[variables('lbBackendPoolID1')]"
               },
               "probe": {
-                "id": "[variables('lbProbeID2')]"
+                "id": "[variables('lbProbeID1')]"
               },
               "protocol": "Tcp",
-              "frontendPort": 50014,
-              "backendPort": 50014,
+              "frontendPort": 50016,
+              "backendPort": 50016,
               "idleTimeoutInMinutes": 30
             }
           },
@@ -330,117 +329,18 @@
                 "id": "[variables('lbProbeID1')]"
               },
               "protocol": "Tcp",
-              "frontendPort": 50114,
-              "backendPort": 50114,
-              "idleTimeoutInMinutes": 30
-            }
-          },
-          {
-            "name": "lbrule15",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID1')]"
-              },
-              "backendAddressPool": {
-                "id": "[variables('lbBackendPoolID1')]"
-              },
-              "probe": {
-                "id": "[variables('lbProbeID1')]"
-              },
-              "protocol": "Tcp",
-              "frontendPort": 50016,
-              "backendPort": 50016,
-              "idleTimeoutInMinutes": 30
-            }
-          },
-          {
-            "name": "lbrule16",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID1')]"
-              },
-              "backendAddressPool": {
-                "id": "[variables('lbBackendPoolID1')]"
-              },
-              "probe": {
-                "id": "[variables('lbProbeID2')]"
-              },
-              "protocol": "Tcp",
-              "frontendPort": 50016,
-              "backendPort": 50016,
-              "idleTimeoutInMinutes": 30
-            }
-          },
-          {
-            "name": "lbrule17",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID1')]"
-              },
-              "backendAddressPool": {
-                "id": "[variables('lbBackendPoolID1')]"
-              },
-              "probe": {
-                "id": "[variables('lbProbeID1')]"
-              },
-              "protocol": "Tcp",
               "frontendPort": 50116,
               "backendPort": 50116,
-              "idleTimeoutInMinutes": 30
-            }
-          },
-          {
-            "name": "lbrule18",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID1')]"
-              },
-              "backendAddressPool": {
-                "id": "[variables('lbBackendPoolID1')]"
-              },
-              "probe": {
-                "id": "[variables('lbProbeID2')]"
-              },
-              "protocol": "Tcp",
-              "frontendPort": 3300,
-              "backendPort": 3300,
-              "idleTimeoutInMinutes": 30
-            }
-          },
-          {
-            "name": "lbrule19",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID1')]"
-              },
-              "backendAddressPool": {
-                "id": "[variables('lbBackendPoolID1')]"
-              },
-              "probe": {
-                "id": "[variables('lbProbeID2')]"
-              },
-              "protocol": "Tcp",
-              "frontendPort": 3301,
-              "backendPort": 3301,
               "idleTimeoutInMinutes": 30
             }
           }
         ],
         "probes": [
           {
-            "name": "healthprobeASCS",
+            "name": "healthprobepo",
             "properties": {
               "protocol": "Tcp",
               "port": 62000,
-              "intervalInSeconds": 15,
-              "numberOfProbes": 2
-            }
-          },
-          {
-            "name": "healthprobeERS",
-            "properties": {
-              "protocol": "Tcp",
-              "port": 61000,
               "intervalInSeconds": 15,
               "numberOfProbes": 2
             }
