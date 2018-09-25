@@ -61,7 +61,7 @@
     "publicIPAddressName1": "[parameters('publicIPAddressName1')]",
     "publicIPAddressName2": "[parameters('publicIPAddressName2')]",
     "publicIPAddressID1": "[resourceId(resourceGroup().name,'Microsoft.Network/publicIPAddresses',variables('publicIPAddressName1'))]",
-    "publicIPAddressID2": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName2'))]",
+    "publicIPAddressID2": "[resourceId(resourceGroup().name,'Microsoft.Network/publicIPAddresses',variables('publicIPAddressName2'))]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
     "frontEndIPConfigID1": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]",
     "frontEndIPConfigID2": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd2')]",
@@ -71,34 +71,6 @@
     "lbProbeID2": "[concat(variables('lbID'),'/probes/lbprobe2')]"
   },
   "resources": [
-   
-    //{
-    //  "apiVersion": "2015-06-15",
-    //  "type": "Microsoft.Network/networkInterfaces",
-    //  "name": "[variables('nicName')]",
-    //  "location": "[parameters('location')]",
-    //  "dependsOn": [
-    //    "[concat('Microsoft.Network/loadBalancers/', variables('loadBalancerName'))]"
-    //  ],
-    //  "properties": {
-    //    "ipConfigurations": [
-    //      {
-    //        "name": "ipconfig1",
-    //        "properties": {
-    //          "privateIPAllocationMethod": "Dynamic",
-    //          "subnet": {
-    //            "id": "[variables('subnetRef')]"
-    //          },
-    //          "loadBalancerBackendAddressPools": [
-    //            {
-    //              "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')),'/backendAddressPools/loadBalancerBackEnd')]"
-    //            }
-    //          ]
-    //        }
-    //      }
-    //    ]
-    //  }
-    //},
     {
       "apiVersion": "2015-06-15",
       "name": "[variables('loadBalancerName')]",
@@ -108,7 +80,7 @@
         //"[variables('subnetRef')]"
         //"[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
         //need to fix
-        "[resourceId(resourceGroup().name,'Microsoft.Network/publicIPAddresses', variables('publicIPAddressName1'))]"
+        //"[resourceId(resourceGroup().name,'Microsoft.Network/publicIPAddresses', variables('publicIPAddressName1'))]"
         //"[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName2'))]"
 
       ],
@@ -142,12 +114,13 @@
         ],
         "loadBalancingRules": [
           {
+            "name": "lbrule",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID1')]"
               },
               "backendAddressPool": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/backendAddressPools/BackendPool1')]"
+               "id": "[variables('lbBackendPoolID1')]"
               },
               "probe": {
                 "id": "[variables('lbProbeID1')]"
@@ -156,8 +129,7 @@
               "frontendPort": 80,
               "backendPort": 80,
               "idleTimeoutInMinutes": 15
-            },
-            "name": "lbrule"
+            }
           },
           {
             "name": "LBRuleForVIP1",
@@ -193,7 +165,6 @@
               }
             }
           }
-
         ],
         "probes": [
           {

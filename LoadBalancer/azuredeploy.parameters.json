@@ -12,7 +12,10 @@
       "value": "AppSubnet"
     },
     "loadBalancerName": {
-      "value": "ILB1"
+      "value": "DELME"
+    },
+    "loadBalancerIP": {
+      "value": "10.0.2.6"
     }
   }
 }

@@ -9,10 +9,23 @@
       "value": "CoreVnet"
     },
     "subnetName": {
-      "value": "AppSubnet"
+      "value": "FESubnet"
     },
     "loadBalancerName": {
       "value": "EXTLB"
+    },
+
+    "publicIPAddressName1": {
+      "value": "PIP1",
+      "metadata": {
+        "description": "Existing static Public IP name"
+      }
+    },
+    "publicIPAddressName2": {
+      "value": "PIP2",
+      "metadata": {
+        "description": "Existing static Public IP name"
+      }
     }
   }
 }
