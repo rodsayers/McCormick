@@ -279,7 +279,7 @@
               "backendPort": 50014,
               "idleTimeoutInMinutes": 30
             }
-          },          
+          },
           {
             "name": "lbrule12",
             "properties": {
@@ -297,7 +297,7 @@
               "backendPort": 50114,
               "idleTimeoutInMinutes": 30
             }
-          },          
+          },
           {
             "name": "lbrule13",
             "properties": {
@@ -332,6 +332,25 @@
               "frontendPort": 50116,
               "backendPort": 50116,
               "idleTimeoutInMinutes": 30
+            }
+          },
+          {
+            "name": "lbrule15",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID1')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID1')]"
+              },
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 445,
+              "backendPort": 445,
+              "idleTimeoutInMinutes": 30,
+              "enableFloatingIP": true
             }
           }
         ],

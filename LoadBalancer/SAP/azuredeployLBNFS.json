@@ -97,7 +97,8 @@
               "protocol": "Tcp",
               "frontendPort": 2049,
               "backendPort": 2049,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30,
+              "enableFloatingIP": true
             }
           },
           {
@@ -115,7 +116,84 @@
               "protocol": "Udp",
               "frontendPort": 2049,
               "backendPort": 2049,
-              "idleTimeoutInMinutes": 30
+              "idleTimeoutInMinutes": 30,
+              "enableFloatingIP": true
+            }
+          },
+          {
+            "name": "lbrule3",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID1')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID1')]"
+              },
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 111,
+              "backendPort": 111,
+              "idleTimeoutInMinutes": 30,
+              "enableFloatingIP": true
+            }
+          },
+          {
+            "name": "lbrule4",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID1')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID1')]"
+              },
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
+              },
+              "protocol": "Udp",
+              "frontendPort": 111,
+              "backendPort": 111,
+              "idleTimeoutInMinutes": 30,
+              "enableFloatingIP": true
+            }
+          },
+          {
+            "name": "lbrule5",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID1')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID1')]"
+              },
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 20048,
+              "backendPort": 20048,
+              "idleTimeoutInMinutes": 30,
+              "enableFloatingIP": true
+            }
+          },
+          {
+            "name": "lbrule6",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID1')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID1')]"
+              },
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
+              },
+              "protocol": "Udp",
+              "frontendPort": 20048,
+              "backendPort": 20048,
+              "idleTimeoutInMinutes": 30,
+              "enableFloatingIP": true
             }
           }
         ],
@@ -125,8 +203,8 @@
             "properties": {
               "protocol": "Tcp",
               "port": 61000,
-              "intervalInSeconds": 15,
-              "numberOfProbes": 2
+              "intervalInSeconds":30,
+              "numberOfProbes": 1
             }
           }
         ]

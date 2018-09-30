@@ -64,8 +64,8 @@
     "frontEndIPConfigID1": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]",
     "frontEndIPConfigID2": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd2')]",
     "lbBackendPoolID1": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
-    "lbBackendPoolID2": "[concat(variables('lbID'),'/backendAddressPools/BackendPool2')]",
-    "lbProbeID1": "[concat(variables('lbID'),'/probes/lbprobe1')]",
+    "lbBackendPoolID2": "[concat(variables('lbID'),'/backendAddressPools/Saprouter')]",
+    "lbProbeID1": "[concat(variables('lbID'),'/probes/usfs1pip01pwdfio')]",
     "lbProbeID2": "[concat(variables('lbID'),'/probes/lbprobe2')]"
   },
   "resources": [
@@ -110,7 +110,7 @@
         ],
         "loadBalancingRules": [
           {
-            "name": "lbrule",
+            "name": "lbrule1",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID1')]"
@@ -122,53 +122,138 @@
                 "id": "[variables('lbProbeID1')]"
               },
               "protocol": "Tcp",
-              "frontendPort": 80,
-              "backendPort": 80,
+              "frontendPort": 443,
+              "backendPort": 44300,
               "idleTimeoutInMinutes": 15
             }
           },
           {
-            "name": "LBRuleForVIP1",
+            "name": "usfs1pip01pwdfio",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID1')]"
+                "id": "[variables('frontEndIPConfigID2')]"
               },
               "backendAddressPool": {
                 "id": "[variables('lbBackendPoolID1')]"
               },
               "protocol": "Tcp",
               "frontendPort": 443,
-              "backendPort": 443,
+              "backendPort": 44301,
               "probe": {
                 "id": "[variables('lbProbeID1')]"
               }
             }
           },
           {
-            "name": "LBRuleForVIP2",
+            "name": "azr99saprout-3299",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID2')]"
               },
               "backendAddressPool": {
-                "id": "[variables('lbBackendPoolID2')]"
+                "id": "[variables('lbBackendPoolID1')]"
               },
               "protocol": "Tcp",
-              "frontendPort": 443,
-              "backendPort": 444,
+              "frontendPort": 3299,
+              "backendPort": 3299,
               "probe": {
-                "id": "[variables('lbProbeID2')]"
+                "id": "[variables('lbProbeID1')]"
+              }
+            }
+          },
+          {
+            "name": "azr99saprout-3200",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID2')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID1')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 3200,
+              "backendPort": 3200,
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
+              }
+            }
+          },
+          {
+            "name": "azr99saprout-23",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID2')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID1')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 23,
+              "backendPort": 23,
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
+              }
+            }
+          },
+          {
+            "name": "azr99saprout-1503",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID2')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID1')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 1503,
+              "backendPort": 1503,
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
+              }
+            }
+          },
+          {
+            "name": "azr99saprout-5601",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID2')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID1')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 5601,
+              "backendPort": 5601,
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
+              }
+            }
+          },
+          {
+            "name": "azr99saprout-3389",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID2')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbBackendPoolID1')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 3389,
+              "backendPort": 3389,
+              "probe": {
+                "id": "[variables('lbProbeID1')]"
               }
             }
           }
         ],
         "probes": [
           {
-            "name": "lbprobe1",
+            "name": "usfs1pip01pwdfio",
             "properties": {
               "protocol": "Tcp",
-              "port": 80,
-              "intervalInSeconds": 15,
+              "port": 44300,
+              "intervalInSeconds": 5,
               "numberOfProbes": 2
             }
           },
@@ -176,7 +261,7 @@
             "name": "lbprobe2",
             "properties": {
               "protocol": "Tcp",
-              "port": 445,
+              "port": 44301,
               "intervalInSeconds": 5,
               "numberOfProbes": 2
             }
