@@ -12,17 +12,17 @@
       "value": "usfs1sbo01drsapprod"
     },
     "loadBalancerName": {
-      "value": "usfs1lbo01drwd"
+      "value": "usfs1lbo01pegress"
     },
 
     "publicIPAddressName1": {
-      "value": "usfs01pip01drpwd",
+      "value": "usfs1pip01pegress",
       "metadata": {
         "description": "Existing static Public IP name"
       }
     },
     "publicIPAddressName2": {
-      "value": "usfs01pip02drpwd",
+      "value": "usfs1pip01qegress",
       "metadata": {
         "description": "Existing static Public IP name"
       }

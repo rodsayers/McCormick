@@ -1,4 +1,4 @@
-#Requires -Version 3.0
+﻿#Requires -Version 3.0
 #Run Connect-AzureRmAccount
 #Set-AzureRmContext -Subscriptionname "FGI SAP"
 Param(
@@ -8,8 +8,8 @@ Param(
     [switch] $UploadArtifacts,
     [string] $StorageAccountName,
     [string] $StorageContainerName = $ResourceGroupName.ToLowerInvariant() + '-stageartifacts',
-    [string] $TemplateFile = 'azuredeployLBPO.json', 
-    [string] $TemplateParametersFile = 'azuredeploy.parameters.json',
+    [string] $TemplateFile = 'azuredeployExtOutbLBPO.json', 
+    [string] $TemplateParametersFile = 'azuredeployExtOutbLBPO.parameters.json',
     [string] $ArtifactStagingDirectory = '.',
     [string] $DSCSourceFolder = 'DSC',
     [switch] $ValidateOnly

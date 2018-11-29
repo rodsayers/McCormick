@@ -21,7 +21,6 @@
     <TargetLanguage>CS</TargetLanguage>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SqlServerVerification>False</SqlServerVerification>
-    <GenerateCreateScript>False</GenerateCreateScript>
     <IncludeSchemaNameInFileName>True</IncludeSchemaNameInFileName>
     <IsSqlChangeAutomationProject>True</IsSqlChangeAutomationProject>
     <MinimumEngineVersion>1.17.18144</MinimumEngineVersion>

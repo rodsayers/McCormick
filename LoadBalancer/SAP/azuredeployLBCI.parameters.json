@@ -3,22 +3,22 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "virtualNetworkResourceGroup": {
-      "value": "CoreNetwork"
+      "value": "usfs1rgp01coreinfra"
     },
     "virtualNetworkName": {
-      "value": "CoreVnet"
+      "value": "usfs1net01eastus2"
     },
     "subnetName": {
-      "value": "APPSubnet"
+      "value": "usfs1sbo01drsapprod"
     },
     "loadBalancerName": {
-      "value": "DELME2"
+      "value": "usfs1lbo01drci"
     },
     "loadBalancerIP1": {
-      "value": "10.0.2.237"
+      "value": "10.202.36.200"
     },
     "loadBalancerIP2": {
-      "value": "10.0.2.238"
+      "value": "10.202.36.201"
     }
   }
 }
